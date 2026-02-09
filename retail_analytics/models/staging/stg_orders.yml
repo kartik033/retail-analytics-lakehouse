@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: order_date
+        tests:
+          - not_null
+
+      - name: discount_percent
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+
+      - name: is_return
+        tests:
+          - not_null
+
+      - name: list_price_clean
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "is_return = false"
+
+      - name: revenue_clean
+        tests:
+          - not_null:
+              config:
+                where: "is_return = false"
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "is_return = false"

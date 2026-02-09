@@ -1,0 +1,28 @@
+# S3 Data Layout
+
+This project uses a 3-layer lakehouse layout in S3 to separate raw, cleaned, and analytics outputs.
+
+## Buckets / Paths
+
+### Raw (immutable)
+- Purpose: Store source files exactly as received (no edits).
+- Path:
+  - s3://<your-bucket>/raw/orders/
+
+### Cleaned (standardized Parquet)
+- Purpose: Standardize schema + types and convert CSV → Parquet for Athena performance.
+- Format: Parquet (Snappy)
+- Partition: order_date
+- Path:
+  - s3://<your-bucket>/cleaned/parquet/orders/
+
+### dbt / Athena staging outputs
+- Purpose: Temporary query results and dbt intermediate files.
+- Path:
+  - s3://<your-bucket>/athena-result/   (Athena workgroup results)
+  - s3://<your-bucket>/dbt_staging/     (dbt staging dir)
+
+## Why this layout?
+- Raw data remains reproducible and auditable.
+- Cleaned layer enables fast Athena queries using Parquet + partition pruning.
+- Analytics layer (dbt) remains separate from cleaned to avoid mixing concerns.

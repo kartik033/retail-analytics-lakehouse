@@ -1,0 +1,20 @@
+# Amazon Athena Notes
+
+Athena is used as the query engine over data stored in S3 and registered in the Glue Data Catalog.
+
+## Databases
+- retail_raw: raw CSV tables (debug/inspection only)
+- retail_cleaned: cleaned Parquet tables (source layer for dbt)
+- retail_analytics: analytics models created by dbt (staging/marts/metrics)
+
+## Partitioning
+Cleaned orders data is partitioned by:
+- order_date
+
+This improves performance by reducing data scanned (partition pruning).
+
+## Useful Commands
+
+### Refresh partitions (if needed)
+```sql
+MSCK REPAIR TABLE retail_cleaned.<table_name>;

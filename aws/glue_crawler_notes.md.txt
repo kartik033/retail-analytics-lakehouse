@@ -1,0 +1,27 @@
+# AWS Glue Crawler Notes
+
+Glue Crawlers are used to register S3 datasets as tables in the AWS Glue Data Catalog
+so they can be queried from Athena.
+
+## Crawlers
+
+### Raw crawler
+- Source:
+  - s3://<your-bucket>/raw/
+- Output DB:
+  - retail_raw
+- Purpose:
+  - Discover schema of raw CSV files for quick inspection/debugging.
+
+### Cleaned crawler
+- Source:
+  - s3://<your-bucket>/cleaned/parquet/
+- Output DB:
+  - retail_cleaned
+- Purpose:
+  - Register Parquet datasets so Athena can query them efficiently.
+  - Detect partitions (order_date).
+
+## Best Practices Used
+- Separate databases per layer (raw vs cleaned) to prevent schema conflicts.
+- Re-run crawler after structural changes (new folders/partitions/new tables).
